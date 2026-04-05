@@ -1,7 +1,11 @@
 #include <bluefruit.h>
 
-#define PIN_WAKEUP 1
 #define BEACON_MAJOR 1
+
+#define PIN_WAKEUP 1
+#define PIN_DRV5032FB 0
+//#define LED_RED 1
+#define PIN_WAKEUP_EXT 17
 
 uint8_t beaconUuid[] = {
   0x00, 0x10, 0x77, 0x46, 0x50, 0x17, 0x00, 0x00,
@@ -79,6 +83,12 @@ void setup() {
         //sd_app_evt_wait(); 활성화 하면 0.3ma -> 0.7ma 로 전류 상승
         delay(100); 
       }
+      Bluefruit.Advertising.stop();
+      BLEBeacon stopBeacon(beaconUuid, BEACON_MAJOR, 9999, -59);
+      Bluefruit.Advertising.setBeacon(stopBeacon);
+	  Bluefruit.Advertising.setInterval(32, 32);
+      Bluefruit.Advertising.start(0);
+      delay(100); // 약 5~7회 송출될 시간 (20ms * 7)
       Bluefruit.Advertising.stop();
     }
   }
