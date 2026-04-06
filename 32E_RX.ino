@@ -118,7 +118,7 @@ void loop() {
     }
   } 
   else {
-    // 신호 유실 또는 STOP RX 수신 시
+    // 신호 유실 또는 EMS 수신 시
     if (digitalRead(OUTPUT_S1) == HIGH) {
       digitalWrite(OUTPUT_S1, LOW);
       digitalWrite(LED_BUILTIN, HIGH);
