@@ -71,7 +71,7 @@ void setup() {
       Bluefruit.setTxPower(0); 
       BLEBeacon beacon(beaconUuid, BEACON_MAJOR, v_bat, -59);
       Bluefruit.Advertising.setBeacon(beacon);
-      Bluefruit.Advertising.setInterval(800, 800);
+      Bluefruit.Advertising.setInterval(800, 1600);
       Bluefruit.Advertising.start(0);
       //NRF_POWER->DCDCEN = 1;  활성화 하면 3ma 로 증가함
       //shutdown_extra_power();  전류 차이 없음 
@@ -81,8 +81,11 @@ void setup() {
 
       while (digitalRead(PIN_WAKEUP) == LOW) {
         //sd_app_evt_wait(); 활성화 하면 0.3ma -> 0.7ma 로 전류 상승
-        delay(100); 
+        delay(100);
+        //suspendLoop();
+        //waitForEvent();								
       }
+
       Bluefruit.Advertising.stop();
       BLEBeacon stopBeacon(beaconUuid, BEACON_MAJOR, 9999, -59);
       Bluefruit.Advertising.setBeacon(stopBeacon);

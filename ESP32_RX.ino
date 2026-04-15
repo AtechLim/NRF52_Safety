@@ -5,11 +5,6 @@
 #include <BLEBeacon.h>
 
 #define SWAP_ENDIAN_16(x) (uint16_t)(((x) << 8) | ((x) >> 8))
-
-const uint8_t TARGET_UUID[16] = {
-  0x00, 0x10, 0x77, 0x46, 0x50, 0x17, 0x00, 0x00,
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-};
 #define SENDER_MAJOR     1 
 
 #define LED_RED          5
@@ -21,8 +16,13 @@ const uint8_t TARGET_UUID[16] = {
 #define LOW_BAT_S2       3      
 #define LOW_BAT_THRESHOLD 3.5 
 
+const uint8_t TARGET_UUID[16] = {
+  0x00, 0x10, 0x77, 0x46, 0x50, 0x17, 0x00, 0x00,
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+};
+
 const uint16_t TARGET_MAJOR = SENDER_MAJOR;  // iBeacon은 이미 big-endian 형식
-const unsigned long KEEP_ALIVE_TIME = 2500; 
+const unsigned long KEEP_ALIVE_TIME = 3000; 
 
 BLEScan* pBLEScan;
 volatile unsigned long lastBeaconTime = 0; 
