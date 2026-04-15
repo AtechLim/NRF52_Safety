@@ -150,6 +150,7 @@ void loop() {
   delay(10); 
 
   // 메모리 사용량 모니터링 (10초마다 출력)
+  /*
   static unsigned long lastMemoryCheck = 0;
   if (millis() - lastMemoryCheck > 10000) {
     Serial.printf("Free heap: %d bytes, Total heap: %d bytes\n", ESP.getFreeHeap(), ESP.getHeapSize());
@@ -166,4 +167,5 @@ void loop() {
     }
     lastMemoryCheck = millis();
   }
+  */
 }
