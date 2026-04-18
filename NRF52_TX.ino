@@ -2,9 +2,8 @@
 
 #define BEACON_MAJOR 1
 
-#define PIN_WAKEUP 1
 #define PIN_DRV5032FB 0
-//#define LED_RED 1
+#define LED_RED 1
 #define PIN_WAKEUP_EXT 17
 
 uint8_t beaconUuid[] = {
@@ -46,7 +45,7 @@ void shutdown_extra_power() {
 
 void shutdown_gpio() {
   for (uint8_t i = 0; i < 22; i++) {
-    if (i != PIN_WAKEUP && i != LED_BUILTIN) nrf_gpio_cfg_default(i); // && i != EXT_VCC
+    if (i != PIN_DRV5032FB && i != LED_RED && i != PIN_WAKEUP_EXT) nrf_gpio_cfg_default(i); // && i != EXT_VCC
   }
 }
 
@@ -56,30 +55,34 @@ void setup() {
   shutdown_extra_power();
   shutdown_gpio(); //0.02ma 정도 줄어듬 
   
-  pinMode(PIN_WAKEUP, INPUT);
-  pinMode(LED_BUILTIN, OUTPUT);
-  digitalWrite(LED_BUILTIN, LOW);
+  pinMode(PIN_DRV5032FB, INPUT);
+  pinMode(PIN_WAKEUP_EXT, INPUT);
+  pinMode(LED_RED, OUTPUT);
+  digitalWrite(LED_RED, LOW);
   //pinMode(EXT_VCC, OUTPUT);
   //digitalWrite(EXT_VCC, LOW);
 
   uint16_t v_bat = readBattery(); 
 
-  if (digitalRead(PIN_WAKEUP) == LOW) {
+  if (digitalRead(PIN_DRV5032FB) == LOW || digitalRead(PIN_WAKEUP_EXT) == LOW) {
+      digitalWrite(LED_RED, HIGH);
+      delay(10);
+      digitalWrite(LED_RED, LOW);
 
     if (Bluefruit.begin()) {
       Bluefruit.autoConnLed(false);
-      Bluefruit.setTxPower(0); 
+      Bluefruit.setTxPower(0); // 0,4,8
       BLEBeacon beacon(beaconUuid, BEACON_MAJOR, v_bat, -59);
       Bluefruit.Advertising.setBeacon(beacon);
-      Bluefruit.Advertising.setInterval(800, 1600);
+      Bluefruit.Advertising.setInterval(800, 1000);
       Bluefruit.Advertising.start(0);
       //NRF_POWER->DCDCEN = 1;  활성화 하면 3ma 로 증가함
       //shutdown_extra_power();  전류 차이 없음 
-      digitalWrite(LED_BUILTIN, HIGH);
-      delay(20);
-      digitalWrite(LED_BUILTIN, LOW);
+      digitalWrite(LED_RED, HIGH);
+      delay(10);
+      digitalWrite(LED_RED, LOW);
 
-      while (digitalRead(PIN_WAKEUP) == LOW) {
+      while (digitalRead(PIN_DRV5032FB) == LOW || digitalRead(PIN_WAKEUP_EXT) == LOW) {
         //sd_app_evt_wait(); 활성화 하면 0.3ma -> 0.7ma 로 전류 상승
         delay(100);
         //suspendLoop();
@@ -89,13 +92,14 @@ void setup() {
       Bluefruit.Advertising.stop();
       BLEBeacon stopBeacon(beaconUuid, BEACON_MAJOR, 9999, -59);
       Bluefruit.Advertising.setBeacon(stopBeacon);
-	  Bluefruit.Advertising.setInterval(32, 32);
+	    Bluefruit.Advertising.setInterval(32, 32);
       Bluefruit.Advertising.start(0);
       delay(100); // 약 5~7회 송출될 시간 (20ms * 7)
       Bluefruit.Advertising.stop();
     }
   }
-  nrf_gpio_cfg_sense_input(digitalPinToPinName(PIN_WAKEUP), NRF_GPIO_PIN_NOPULL, NRF_GPIO_PIN_SENSE_LOW);
+  nrf_gpio_cfg_sense_input(digitalPinToPinName(PIN_DRV5032FB), NRF_GPIO_PIN_NOPULL, NRF_GPIO_PIN_SENSE_LOW);
+  nrf_gpio_cfg_sense_input(digitalPinToPinName(PIN_WAKEUP_EXT), NRF_GPIO_PIN_NOPULL, NRF_GPIO_PIN_SENSE_LOW);
   shutdown_extra_power();
   NRF_POWER->SYSTEMOFF = 1;
 }
