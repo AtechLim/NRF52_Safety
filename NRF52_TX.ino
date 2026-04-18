@@ -106,7 +106,7 @@ void setup() {
   // GPIO 핀 모드 설정
   pinMode(PIN_DRV5032FB, INPUT);
   pinMode(PIN_WAKEUP_EXT, INPUT);
-  pinMode(PAIRING_BUTTON, INPUT_PULLUP);
+  pinMode(PAIRING_BUTTON, INPUT);
   pinMode(LED_RED, OUTPUT);
   digitalWrite(LED_RED, LOW);
 
